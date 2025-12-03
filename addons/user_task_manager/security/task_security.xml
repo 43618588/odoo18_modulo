@@ -1,0 +1,6 @@
+<odoo>
+    <record id="user_task_own_rule" model="ir.rule">
+        
+    
+    </record>
+</odoo>
