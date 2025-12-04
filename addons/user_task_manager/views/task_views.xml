@@ -1,0 +1,131 @@
+<odoo>
+    <!-- Vista tipo formulario-->
+    <record id='view_user_task_form' model='ir.ui.view'>
+        <field name='name'>user.task.form</field>
+        <field name='model'>user.task</field>
+        <field name='arch' type='xml'>
+            <form string='User Task'>
+                <sheet>
+                    <group>
+                        <field name='name'/>
+                        <field name='description'/>
+                        <field name='priority'/>
+                        <field name='state'/>
+                        <field name='deadline'/>
+                        <field name='user_id' readonly='1'/>
+                        <field name='is_done' readonly='1'/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Vista tipo lista-->
+    <record id='view_user_task_list' model='ir.ui.view'>
+        <field name='name'>user.task.list</field>
+        <field name='model'>user.task</field>
+        <field name='arch' type='xml'>
+            <list string='Tareas'>
+                <field name='name'/>
+                <field name='priority'/>
+                <field name='state'/>
+                <field name='deadline'/>
+                <field name='is_done' readonly='1'/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista tipo kanban-->
+    <record id="view_user_task_kanban" model="ir.ui.view">
+        <field name="name">user.task.kanban</field>
+        <field name="model">user.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="">
+                <field name="name" />
+                <field name="description" />
+                <field name="priority" />
+                <field name="state" />
+                <field name="deadline" />
+                <field name="user_id" />
+                <field name="is_done" />
+
+                <template>
+                    <t t-name="kanban-box">
+                        <t t-if="record.priority and record.priority.raw_value">
+                            <t t-call="user_task_manager.kanban_content" />
+                        </t>
+
+                        <t t-if="!(record.priority and record.priority.raw_value)">
+                            <t t-call="user_task_manager.kanban_content" />
+                        </t>
+                    </t>
+
+                    <!-- Crear plantilla -->
+                    <t t-name="user_task_manager.kanban_content">
+                        <div class="">
+                            <div>
+                                <strong>
+                                    <field name="name" />
+                                </strong>
+                            </div>
+                            <div>
+                                <field name="description" />
+                            </div>
+                            <div>
+                                <i class="" />
+                                <field name="deadline" />
+                            </div>
+                            <div>
+                                <i class="" />
+                                <field name="priority" />
+                            </div>
+                        </div>
+                        <div class="">
+                            <span>
+                                <i class="" />
+                                <field name="user_id" />
+                            </span>
+                            <t t-if="record.priority and record.priority.raw_value">
+                                <span class="" t-attf-class="">
+                                    <t t-esc="record.state.value" />
+                                </span>
+                            </t>
+                        </div>
+                        <t t-if="record.is_done and record.is_done.raw_value">
+                            <i class="" title="Tarea completada" />
+                        </t>
+
+                    </t>
+
+                </template>
+            </kanban>
+        </field>
+
+    </record>
+
+    <!-- Action -->
+    <record id="view_user_task" model="ir.actions.act_window">
+        <field name="name">Mis Tareas</field>
+        <field name="res_model">user.task</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p>Desde aquí puedes gestionar tus tareas personales</p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem 
+        id="menu_user_task_root"
+        name="Gestor de tareas"
+        sequence="10"
+    />
+
+    <menuitem 
+        id="menu_user_task"
+        name="Mis tareas"
+        parent="menu_user_task_root"
+        action="view_user_task"
+        sequence="20"
+    />
+</odoo>
